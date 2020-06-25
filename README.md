@@ -1,4 +1,5 @@
 # seetec-app
+# teste
 Trabalho de Conclusão de Curso - Desenvolvimento de Projeto Mobile
 
 O App consiste em um painel para os alunos da ETEC Sebrae, que poderam ver caléndarios de ações a serem postadas pela instituição tais como avisos de aulas, palestras ou afins.
