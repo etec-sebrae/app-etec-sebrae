@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'documento_page.dart';
+
 class PaginaInicial extends StatefulWidget {
   @override
   _PaginaInicialState createState() => _PaginaInicialState();
@@ -138,7 +140,12 @@ class _PaginaInicialState extends State<PaginaInicial> {
                     ))
               ],
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DocumentoPage()),
+              );
+            },
           ),
         ),
       ],
