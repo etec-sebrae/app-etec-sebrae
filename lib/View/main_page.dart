@@ -1,8 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart';
+
+
+
 
 import 'documento_page.dart';
+const urlEvento = "https://api-seetec.herokuapp.com/api/evento";
 
 class PaginaInicial extends StatefulWidget {
   @override
@@ -20,7 +29,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
   Color corQuartoIcone = const Color(0xff627BF2);
   Color corQuintoIcone = const Color(0xff6BB5FE);
 
-  Widget construirContainer(String titulo, String descricao) {
+  Widget construirContainer(String titulo, String data, String descricao) {
     return Container(
       child: InkWell(
         onTap: () {
@@ -55,7 +64,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   10.0, 20.0, 0.0, 10.0),
                               child: Text(
-                                'ETEC-SEBRAE estará fechada a partir do dia 24/02 até o dia 26/02 por conta dos feriados de carnaval, voltaremos com aulas normalmente dia 27/02',
+                                descricao,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 16.0),
                               ),
@@ -95,7 +104,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                 ),
                 SizedBox(height: 10.0),
                 Text(
-                  descricao,
+                  data,
                   style: TextStyle(color: Colors.white, fontSize: 18.0),
                 )
               ],
@@ -104,6 +113,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
         ),
       ),
     );
+
   }
 
   Widget construirBotao(Color cor, String texto) {
@@ -152,9 +162,35 @@ class _PaginaInicialState extends State<PaginaInicial> {
     );
   }
 
+
+  List eventos = [];
+
+  void carregarLista() async{
+    Response response = await get(urlEvento);
+
+    if(response.body.isNotEmpty) {
+      Map retorno = json.decode(response.body);
+
+      eventos =[];
+      for(int x=0; x <retorno['data'].length; x++ ){
+        Map<String, dynamic> evento = Map();
+        retorno['data'][x].forEach((k, v) => evento[k] =v);
+        eventos.add(evento);
+      }
+    }
+  }
+
+  String transformarData(String dataEvento){
+    DateTime todayDate = DateTime.parse(dataEvento);
+    String dataFormatada = (formatDate(todayDate, [dd, '/', mm, '/', yyyy, ' ', hh, ':', nn]));
+    return dataFormatada;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     timeDilation = 3.0;
+    carregarLista();
     return Scaffold(
       backgroundColor: corPrimaria,
       appBar: AppBar(
@@ -177,14 +213,11 @@ class _PaginaInicialState extends State<PaginaInicial> {
             height: 150,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                construirContainer('Carnaval', '24/02 até 26/02'),
-                SizedBox(width: 8.0),
-                construirContainer('Palestra', '30/02 as 14:00'),
-                SizedBox(width: 8.0),
-                construirContainer('Feriado Nacional', 'Tiradentes')
-              ],
+              children: eventos
+                  .map((data) => construirContainer(data['nome'],transformarData(data['dataInicio']), data['descricao'])
+              ).toList()
             ),
+
           ),
           SizedBox(height: 10.0),
           //------Tentando inserir barra para cada container
@@ -222,7 +255,9 @@ class _PaginaInicialState extends State<PaginaInicial> {
         ],
       ),
       drawer: Drawer(
+
         child: ListView(
+
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
@@ -248,4 +283,6 @@ class _PaginaInicialState extends State<PaginaInicial> {
       ),
     );
   }
+
+
 }
