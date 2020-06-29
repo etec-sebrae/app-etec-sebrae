@@ -20,13 +20,17 @@ dependencies:
   flutter:
     sdk: flutter
 
-
+  flutter_launcher_icons: "^0.7.5"
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
   http: ^0.12.1
   flutter_svg: ^0.17.4
   date_format: ^1.0.8
+
+flutter_icons:
+  android: true
+  image_path: "assets/seetec_launcher.png"
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +44,7 @@ flutter:
   assets:
     - assets/etec_sebrae.png
     - assets/papel.svg
+    - assets/logo_app.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
