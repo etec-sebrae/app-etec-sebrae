@@ -27,6 +27,7 @@ dependencies:
   http: ^0.12.1
   flutter_svg: ^0.17.4
   date_format: ^1.0.8
+  shared_preferences: ^0.5.7+3
 
 flutter_icons:
   android: true

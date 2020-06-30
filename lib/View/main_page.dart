@@ -1,14 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart';
-
-
-
 
 import 'documento_page.dart';
 const urlEvento = "https://api-seetec.herokuapp.com/api/evento";

@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:seetec_projeto/View/alerta.dart';
+//import 'package:seetec_projeto/View/alerta.dart';
 import 'package:seetec_projeto/View/main_page.dart';
-import 'package:seetec_projeto/View/cadastro_page.dart';
+//import 'package:seetec_projeto/View/cadastro_page.dart';
 import 'package:seetec_projeto/connection/login_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ResetSenha.dart';
-import 'cadastro_page.dart';
+//import 'cadastro_page.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -29,24 +31,31 @@ class _LoginPageState extends State<LoginPage> {
   Color corQuintoIcone = const Color(0xff6BB5FE);
   TextEditingController login = TextEditingController();
   TextEditingController senha = TextEditingController();
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void _alertSnackBar(
+    TextEditingController login, TextEditingController senha
+    ){
   
-  void _alertSnackBar(){
-    final scaffoldKey = GlobalKey<ScaffoldState>();
     final snackbar = SnackBar(
-      content: Text('email \$_email, password= \$_password'),
+      content: Text('email digitado= '+ login.text + '\nsenha digitada= '+ senha.text,
+          textAlign: TextAlign.left, 
+          style: TextStyle(color: Colors.white,
+          backgroundColor: corPrimaria,)
+        ),
       );
       scaffoldKey.currentState.showSnackBar(snackbar);
-      Scaffold.of(context).showSnackBar(snackbar);
   }
 
   @override
   Widget build(BuildContext context) {
   var size = MediaQuery.of(context).size;
-  var appBar = AppBar (title: Text("Etec SEBRAE v0.3"),
+  var appBar = AppBar (title: Text("Etec SEBRAE v0.1"),
                         centerTitle: true,
-                        backgroundColor: Color(0xff223249),);
+                        backgroundColor: corPrimaria,);
   
   return  Scaffold(
+    key: scaffoldKey,
     appBar: appBar,
     body: SingleChildScrollView(
       child: Column(
@@ -109,11 +118,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: RaisedButton(
                   onPressed: () async {
                     bool retorno = await LoginApi.postLogin(login.text, senha.text);
+                    var prefs = await SharedPreferences.getInstance();
+                    final token = prefs.getString('tokenjwt') ?? '';
                     if (retorno){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaInicial()));
                     } else {
-                      alert(context,"Erro no Login \n Usuário ou Senha Inválido!!");
-                      _alertSnackBar();
+                      _alertSnackBar(login, senha);
                     }
                   },
                   padding: EdgeInsets.zero,
