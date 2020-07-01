@@ -31,7 +31,7 @@ dependencies:
 
 flutter_icons:
   android: true
-  image_path: "assets/seetec_launcher.png"
+  image_path: "assets/icone.png"
 
 dev_dependencies:
   flutter_test:
@@ -46,7 +46,7 @@ flutter:
     - assets/etec_sebrae.png
     - assets/papel.svg
     - assets/logo_app.png
-
+  
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

@@ -38,7 +38,8 @@ class _LoginPageState extends State<LoginPage> {
     ){
   
     final snackbar = SnackBar(
-      content: Text('email digitado= '+ login.text + '\nsenha digitada= '+ senha.text,
+      content: Text('Email ou senha invalida!!',
+        //'email digitado= '+ login.text + '\nsenha digitada= '+ senha.text,
           textAlign: TextAlign.left, 
           style: TextStyle(color: Colors.white,
           backgroundColor: corPrimaria,)
@@ -50,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
   var size = MediaQuery.of(context).size;
-  var appBar = AppBar (title: Text("Etec SEBRAE v0.1"),
+  var appBar = AppBar (title: Text("Etec SEBRAE v0.0"),
                         centerTitle: true,
                         backgroundColor: corPrimaria,);
   
@@ -73,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               children: <Widget>[ 
               Container(
-                padding: EdgeInsets.only(top: 30.0),
+                padding: EdgeInsets.all(30.0),
                 child: Image.asset('assets/logo_app.png'),
               ),
               Container(
