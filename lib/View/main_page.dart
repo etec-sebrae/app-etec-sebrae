@@ -11,6 +11,7 @@ const urlEvento = "https://api-seetec.herokuapp.com/api/evento";
 class PaginaInicial extends StatefulWidget {
   @override
   _PaginaInicialState createState() => _PaginaInicialState();
+
 }
 
 class _PaginaInicialState extends State<PaginaInicial> {
@@ -23,8 +24,14 @@ class _PaginaInicialState extends State<PaginaInicial> {
   Color corTerceiroIcone = const Color(0xff5165C6);
   Color corQuartoIcone = const Color(0xff627BF2);
   Color corQuintoIcone = const Color(0xff6BB5FE);
+  List eventos = [];
+
 
   Widget construirContainer(String titulo, String data, String descricao) {
+    @override
+    initState(){
+      carregarLista();
+    }
     return Container(
       child: InkWell(
         onTap: () {
@@ -156,20 +163,15 @@ class _PaginaInicialState extends State<PaginaInicial> {
       ],
     );
   }
-
-
-  List eventos = [];
-
   void carregarLista() async{
     Response response = await get(urlEvento);
 
     if(response.body.isNotEmpty) {
       Map retorno = json.decode(response.body);
-
       eventos =[];
-      for(int x=0; x <retorno['data'].length; x++ ){
+      for(int x=0; x <retorno['content'].length; x++ ){
         Map<String, dynamic> evento = Map();
-        retorno['data'][x].forEach((k, v) => evento[k] =v);
+        retorno['content'][x].forEach((k, v) => evento[k] =v);
         eventos.add(evento);
       }
     }
@@ -185,8 +187,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
   @override
   Widget build(BuildContext context) {
     timeDilation = 3.0;
-    carregarLista();
-    return Scaffold(
+   return Scaffold(
       backgroundColor: corPrimaria,
       appBar: AppBar(
         title: Text('Etec SEBRAE'),

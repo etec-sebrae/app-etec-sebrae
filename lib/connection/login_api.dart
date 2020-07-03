@@ -15,8 +15,8 @@ class LoginApi {
 
     final encoding = Encoding.getByName('utf-8');
     var header = {'Content-Type': 'application/json', "Accept": "application/json", };
-    // var header = {'Content-Type': 'application/json', 'Accept": "application/json', 'token': 'tokenjwt'};
-    var url = 'https://api-seetec.herokuapp.com/auth';
+    //var header = {'Content-Type': 'application/json', 'Accept": "application/json', 'token': 'tokenjwt'};
+    var url = 'https://api-seetec.herokuapp.com/api/auth';
     var prefs = await SharedPreferences.getInstance();
 
     try {
@@ -28,12 +28,10 @@ class LoginApi {
         print (mapResponse['toque']);
         return true;
       }
-      return true;
     }
     finally {         // finally sempre é executado
       client.close();
     }
     return false;     // usuário inválido
   }
-
 }

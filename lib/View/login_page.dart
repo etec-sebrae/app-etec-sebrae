@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
   var size = MediaQuery.of(context).size;
-  var appBar = AppBar (title: Text("Etec SEBRAE v0.0"),
+  var appBar = AppBar (title: Text("Etec SEBRAE v0.1"),
                         centerTitle: true,
                         backgroundColor: corPrimaria,);
   
@@ -121,6 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                     bool retorno = await LoginApi.postLogin(login.text, senha.text);
                     var prefs = await SharedPreferences.getInstance();
                     final token = prefs.getString('tokenjwt') ?? '';
+                    print(token);
                     if (retorno){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaInicial()));
                     } else {
