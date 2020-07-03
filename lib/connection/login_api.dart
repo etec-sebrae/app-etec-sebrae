@@ -28,6 +28,7 @@ class LoginApi {
         print (mapResponse['toque']);
         return true;
       }
+      return true;
     }
     finally {         // finally sempre é executado
       client.close();

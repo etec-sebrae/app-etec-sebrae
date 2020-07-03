@@ -1,6 +1,4 @@
 import 'dart:convert';
-// import 'dart:io';
-
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -72,7 +70,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Voltar'),
+                                child: Text('Voltar1'),
                               ),
                             ),
                           ],
