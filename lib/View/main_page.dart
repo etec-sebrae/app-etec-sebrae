@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart';
 
 import 'documento_page.dart';
+
 const urlEvento = "https://api-seetec.herokuapp.com/api/evento";
 
 class PaginaInicial extends StatefulWidget {
@@ -23,9 +24,11 @@ class _PaginaInicialState extends State<PaginaInicial> {
   Color corTerceiroIcone = const Color(0xff5165C6);
   Color corQuartoIcone = const Color(0xff627BF2);
   Color corQuintoIcone = const Color(0xff6BB5FE);
+  List eventos = [];
 
   Widget construirContainer(String titulo, String data, String descricao) {
     return Container(
+      padding: EdgeInsets.only(right: 5.0),
       child: InkWell(
         onTap: () {
           showDialog(
@@ -108,7 +111,6 @@ class _PaginaInicialState extends State<PaginaInicial> {
         ),
       ),
     );
-
   }
 
   Widget construirBotao(Color cor, String texto) {
@@ -157,27 +159,25 @@ class _PaginaInicialState extends State<PaginaInicial> {
     );
   }
 
-
-  List eventos = [];
-
-  void carregarLista() async{
+  Future<List<dynamic>> carregarLista() async {
     Response response = await get(urlEvento);
 
-    if(response.body.isNotEmpty) {
+    if (response.body.isNotEmpty) {
       Map retorno = json.decode(response.body);
-
-      eventos =[];
-      for(int x=0; x <retorno['data'].length; x++ ){
+      eventos = [];
+      for (int x = 0; x < retorno['content'].length; x++) {
         Map<String, dynamic> evento = Map();
-        retorno['data'][x].forEach((k, v) => evento[k] =v);
+        retorno['content'][x].forEach((k, v) => evento[k] = v);
         eventos.add(evento);
       }
+      return eventos;
     }
   }
 
-  String transformarData(String dataEvento){
+  String transformarData(String dataEvento) {
     DateTime todayDate = DateTime.parse(dataEvento);
-    String dataFormatada = (formatDate(todayDate, [dd, '/', mm, '/', yyyy, ' ', hh, ':', nn]));
+    String dataFormatada =
+        (formatDate(todayDate, [dd, '/', mm, '/', yyyy, ' ', hh, ':', nn]));
     return dataFormatada;
   }
 
@@ -185,7 +185,6 @@ class _PaginaInicialState extends State<PaginaInicial> {
   @override
   Widget build(BuildContext context) {
     timeDilation = 3.0;
-    carregarLista();
     return Scaffold(
       backgroundColor: corPrimaria,
       appBar: AppBar(
@@ -206,13 +205,34 @@ class _PaginaInicialState extends State<PaginaInicial> {
           Container(
             padding: EdgeInsetsDirectional.fromSTEB(10.0, 10.0, 0.0, 10.0),
             height: 150,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: eventos
-                  .map((data) => construirContainer(data['nome'],transformarData(data['dataInicio']), data['descricao'])
-              ).toList()
+            child: FutureBuilder<dynamic>(
+              future: carregarLista(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: eventos.length,
+                    itemBuilder: (context, index) {
+                      return construirContainer(
+                          snapshot.data[index]['nome'],
+                          transformarData(snapshot.data[index]['dataInicio']),
+                          snapshot.data[index]['descricao']);
+                    },
+                  );
+                } else {
+                  return Container(
+                    padding: EdgeInsets.only(left: 100.0),
+                    width: 200.0,
+                    height: 200.0,
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 5.0,
+                    ),
+                  );
+                }
+              },
             ),
-
           ),
           SizedBox(height: 10.0),
           //------Tentando inserir barra para cada container
@@ -250,9 +270,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
         ],
       ),
       drawer: Drawer(
-
         child: ListView(
-
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
@@ -278,6 +296,4 @@ class _PaginaInicialState extends State<PaginaInicial> {
       ),
     );
   }
-
-
 }
