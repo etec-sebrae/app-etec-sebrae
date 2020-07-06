@@ -70,9 +70,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 ),
               ),
             ),
-            RaisedButton(
-              child: Text('Enviar'),
-            ),
+
           ],
         ),
 

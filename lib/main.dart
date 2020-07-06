@@ -6,6 +6,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations ([DeviceOrientation.portraitUp,]).then((_) {
       runApp(new MaterialApp(
+          debugShowCheckedModeBanner: false,
         home: LoginPage()
       ),
     );

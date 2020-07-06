@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart';
+import 'package:seetec_projeto/View/perfil_page.dart';
 
 import 'documento_page.dart';
 
@@ -118,7 +119,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.all(10.0),
+          padding: EdgeInsets.all(8.0),
           child: FlatButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6.0)),
@@ -126,10 +127,10 @@ class _PaginaInicialState extends State<PaginaInicial> {
             child: Stack(
               children: <Widget>[
                 SizedBox(
-                  height: 80,
-                  width: 350,
+                  height: 60,
+                  width: 200,
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 35, 0.0, 0.0),
+                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 25, 0.0, 0.0),
                     child: Text(
                       texto,
                       textAlign: TextAlign.left,
@@ -138,7 +139,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                   ),
                 ),
                 Padding(
-                    padding: EdgeInsets.fromLTRB(323.0, 25, 0.0, 0.0),
+                    padding: EdgeInsets.fromLTRB(280.0, 20, 0.0, 0.0),
                     child: SvgPicture.asset(
                       'assets/papel.svg',
                       color: Colors.white,
@@ -191,7 +192,26 @@ class _PaginaInicialState extends State<PaginaInicial> {
         title: Text('Etec SEBRAE'),
         centerTitle: true,
         backgroundColor: corPrimaria,
-      ),
+        actions: <Widget>[
+          new IconButton(icon: new Icon(Icons.account_circle),
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PerfilPage()),
+              );
+            },
+          ),
+        ],
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
+        textTheme: TextTheme(
+            title: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+            )
+        ),
+    ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -269,31 +289,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
           construirBotao(corQuintoIcone, 'Meus Documentos'),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Cabeçalho Drawer'),
-              decoration: BoxDecoration(
-                color: corSecundaria,
-              ),
-            ),
-            ListTile(
-              title: Text('Item Teste'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('Item Teste'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
+
     );
   }
 }
