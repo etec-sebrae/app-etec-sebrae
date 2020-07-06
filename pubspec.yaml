@@ -28,6 +28,7 @@ dependencies:
   flutter_svg: ^0.17.4
   date_format: ^1.0.8
   shared_preferences: ^0.5.7+3
+  file_picker: ^1.12.0
 
 flutter_icons:
   android: true
@@ -43,9 +44,7 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   assets:
-    - assets/etec_sebrae.png
-    - assets/papel.svg
-    - assets/logo_app.png
+    - assets/
   
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

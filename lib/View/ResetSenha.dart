@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seetec_projeto/Model/colors.dart';
 
 class ResetSenha extends StatefulWidget {
   @override
@@ -7,15 +8,6 @@ class ResetSenha extends StatefulWidget {
 
 
 class _ResetSenha extends State<ResetSenha> {
-  Color corPrimaria = const Color(0xff223249);
-  Color corSecundaria = const Color(0xff5263BB);
-  Color corContainer = const Color(0xff394BB1);
-  Color corContainerDescricaoInicio = const Color(0xff5264CB);
-  Color corContainerDescricaoFim = const Color(0xff3A4BB5);
-  Color corSegundoIcon = const Color(0xff394BB3);
-  Color corTerceiroIcone = const Color(0xff5165C6);
-  Color corQuartoIcone = const Color(0xff627BF2);
-  Color corQuintoIcone = const Color(0xff6BB5FE);
 
 
   @override

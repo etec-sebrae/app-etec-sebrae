@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seetec_projeto/Model/colors.dart';
 
 class DocumentoPage extends StatefulWidget {
   @override
@@ -8,13 +9,14 @@ class DocumentoPage extends StatefulWidget {
 class _DocumentoPageState extends  State<DocumentoPage>{
   String selected;
 
-
-  Color corInicioGradiente = const Color(0xff3747B2);
-  Color corFinalGradiente = const Color(0xff5165CB);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Enviar Documentos'),
+        centerTitle: true,
+        backgroundColor: corPrimaria,
+      ),
       resizeToAvoidBottomPadding: false,
       body: Container(
         padding: EdgeInsets.all(30.0),
@@ -27,8 +29,8 @@ class _DocumentoPageState extends  State<DocumentoPage>{
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Container(
-              width: 250.00,
-              child: Image.asset('assets/etec_sebrae.png'),
+              height: 150.0,
+              child: Image.asset('assets/logo_app.png'),
             ),
             TextFormField(
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.00),

@@ -6,6 +6,7 @@ import 'package:seetec_projeto/View/main_page.dart';
 //import 'package:seetec_projeto/View/cadastro_page.dart';
 import 'package:seetec_projeto/connection/login_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:seetec_projeto/Model/colors.dart';
 
 import 'ResetSenha.dart';
 //import 'cadastro_page.dart';
@@ -18,17 +19,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  Color corInicioGradiente = const Color(0xff3747B2);
-  Color corFinalGradiente = const Color(0xff5165CB);
-  Color corPrimaria = const Color(0xff223249);
-  Color corSecundaria = const Color(0xff5263BB);
-  Color corContainer = const Color(0xff394BB1);
-  Color corContainerDescricaoInicio = const Color(0xff5264CB);
-  Color corContainerDescricaoFim = const Color(0xff3A4BB5);
-  Color corSegundoIcon = const Color(0xff394BB3);
-  Color corTerceiroIcone = const Color(0xff5165C6);
-  Color corQuartoIcone = const Color(0xff627BF2);
-  Color corQuintoIcone = const Color(0xff6BB5FE);
+
   TextEditingController login = TextEditingController();
   TextEditingController senha = TextEditingController();
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
