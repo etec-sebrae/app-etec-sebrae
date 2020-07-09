@@ -1,4 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'dart:convert' show utf8;
+
+const urlCurso = "https://api-seetec.herokuapp.com/api/curso";
+const urlDocumento = "https://api-seetec.herokuapp.com/api/documentos";
 
 class DocumentoPage extends StatefulWidget {
   @override
@@ -6,11 +13,50 @@ class DocumentoPage extends StatefulWidget {
 }
 
 class _DocumentoPageState extends  State<DocumentoPage>{
-  String selected;
-
+  Curso _cursoSelecionado;
+  String _cursoSelec;
+  Documento _documentoSelecionado;
 
   Color corInicioGradiente = const Color(0xff3747B2);
   Color corFinalGradiente = const Color(0xff5165CB);
+
+  Future<List<Curso>> _cursos() async {
+    var response = await get(urlCurso);
+    String source = Utf8Decoder().convert(response.bodyBytes);
+    if (response.statusCode == 200) {
+      final items = json.decode(source).cast<Map<String, dynamic>>();
+      List<Curso> listaDeCursos = items.map<Curso>((json) {
+        return Curso.fromJson(json);
+      }).toList();
+
+      return listaDeCursos;
+    } else {
+      throw Exception('Failed to load internet');
+    }
+  }
+
+  Future<List<Documento>> _documentos() async {
+    var response = await get(urlDocumento);
+    String source = Utf8Decoder().convert(response.bodyBytes);
+    if (response.statusCode == 200) {
+      final items = json.decode(source).cast<Map<String, dynamic>>();
+      List<Documento> listaDeDocumento = items.map<Documento>((json) {
+        return Documento.fromJson(json);
+      }).toList();
+
+      return listaDeDocumento;
+    } else {
+      throw Exception('Failed to load internet');
+    }
+  }
+
+  @override
+  void initState() {
+    _documentoSelecionado = null;
+    super.initState();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,62 +108,77 @@ class _DocumentoPageState extends  State<DocumentoPage>{
                 ),
               ),
             ),
+            FutureBuilder<List<Curso>>(
+                  future: _cursos(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Curso>> snapshot) {
+                    if (!snapshot.hasData) return CircularProgressIndicator();
+                    return DropdownButtonFormField<Curso>(
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16.00),
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(8),
+                        //hintText: "Selecione seu documento...",
+                        hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black, width: 2.0),
+                          borderRadius: BorderRadius.circular(13.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black, width: 2.0),
+                          borderRadius: BorderRadius.circular(13.0),
+                        ),
+                      ),
+                      hint: Text('Selecione o curso'),
+                      //value: _cursoSelecionado
+                      items: snapshot.data
+                          .map((cur) => DropdownMenuItem(
+                          child: Text(cur.nome),
+                          value: cur,
+                          ))
+                         .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _cursoSelecionado = value;
+                        });
+                      },
+                    );
+                  }),
+            FutureBuilder<List<Documento>>(
+                future: _documentos(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<Documento>> snapshot) {
+                  if (!snapshot.hasData) return CircularProgressIndicator();
+                  return DropdownButtonFormField<Documento>(
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16.00),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(8),
+                      //hintText: "Selecione seu documento...",
+                      hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2.0),
+                        borderRadius: BorderRadius.circular(13.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2.0),
+                        borderRadius: BorderRadius.circular(13.0),
+                      ),
+                    ),
+                    hint: Text('Selecione o documento'),
+                    //value: _documentoSelecionado,
+                    items: snapshot.data
+                        .map((doc) => DropdownMenuItem(
+                        value: doc,
+                        child: Text(doc.nome),
+                      ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _documentoSelecionado = value;
+                      });
+                    },
 
-            DropdownButtonFormField<String>(
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16.00),
-              decoration: InputDecoration(
-                //hintText: "Selecione o curso...",
-                hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
-                labelStyle: TextStyle(color: Colors.white, fontSize: 10.00),
-                contentPadding: EdgeInsets.all(8),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  borderRadius: BorderRadius.circular(13.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  borderRadius: BorderRadius.circular(13.0),
-                ),
-              ),
-              items: <String>["Desenvolvimento de Sistemas","Desenvolvimento de Aplicativos",].map((String value) {
-                return new DropdownMenuItem<String>(
-                  value: selected,
-                  child: new Text(value),
-                );
-              }).toList(),
-              onChanged: (String valor ) {
-                setState(() {
-                  selected = valor;
-                });
-              },
-            ),
-
-            DropdownButtonFormField<String>(
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16.00),
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(8),
-                //hintText: "Selecione seu documento...",
-                hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  borderRadius: BorderRadius.circular(13.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  borderRadius: BorderRadius.circular(13.0),
-                ),
-              ),
-              items: <String>['Declaração de Matricula',].map((String value) {
-                return new DropdownMenuItem<String>(
-                  value: selected,
-                  child: new Text(value),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() => selected = value);
-              },
-            ),
-
+                  );
+                }),
             Padding(
               padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
               child: Container(
@@ -139,6 +200,40 @@ class _DocumentoPageState extends  State<DocumentoPage>{
           ],
         ),
       ),
+    );
+  }
+
+
+}
+
+class Curso {
+  int id;
+  String nome;
+  String descricao;
+
+  Curso({this.id, this.nome, this.descricao});
+
+  factory Curso.fromJson(Map<String, dynamic> json) {
+    return Curso(
+      id: json['id'],
+      nome: json['nome'],
+      descricao: json['descricao'],
+    );
+  }
+}
+
+class Documento {
+  int id;
+  String nome;
+  String descricao;
+
+  Documento({this.id, this.nome, this.descricao});
+
+  factory Documento.fromJson(Map<String, dynamic> json) {
+    return Documento(
+      id: json['id'],
+      nome: json['nome'],
+      descricao: json['descricao'],
     );
   }
 }
