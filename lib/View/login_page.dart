@@ -1,14 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:seetec_projeto/View/alerta.dart';
-//import 'package:seetec_projeto/View/alerta.dart';
+import 'package:seetec_projeto/Model/Login.dart';
 import 'package:seetec_projeto/View/main_page.dart';
-//import 'package:seetec_projeto/View/cadastro_page.dart';
 import 'package:seetec_projeto/connection/login_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ResetSenha.dart';
-//import 'cadastro_page.dart';
+
+
 
 
 class LoginPage extends StatefulWidget {
@@ -118,11 +117,14 @@ class _LoginPageState extends State<LoginPage> {
                 height: 50.0, width: MediaQuery.of(context).size.width/3,
                 child: RaisedButton(
                   onPressed: () async {
-                    bool retorno = await LoginApi.postLogin(login.text, senha.text);
+                    Login retorno = await LoginApi.postLogin(login.text, senha.text);
+
                     var prefs = await SharedPreferences.getInstance();
                     final token = prefs.getString('tokenjwt') ?? '';
                     print(token);
-                    if (retorno){
+
+                    if (retorno.login){
+
                       Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaInicial()));
                     } else {
                       _alertSnackBar(login, senha);
@@ -142,27 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                   )
                 ),
               ),
-   /*            SizedBox (height: 10.0,),
-              Container(
-                height: 50.0, width: MediaQuery.of(context).size.width/3,
-                child: RaisedButton(
-                  onPressed: () async {
-                    await Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaCadastrar()));
-                  },   // onPressed
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0),),
-                  child:Ink (
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: <Color>[corTerceiroIcone, corQuintoIcone,],),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Text("Cadastrar", style: TextStyle(color: Colors.white, fontSize: 25.0)),
-                    ),
-                  ),
-                ),
-              ), */
+
               ],
             ),
           ),

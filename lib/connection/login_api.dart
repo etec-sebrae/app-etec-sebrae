@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:seetec_projeto/Model/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginApi {
 
 
-  static Future<bool> postLogin (String login, String senha) async {
+  static Future<Login> postLogin (String login, String senha) async {
     var client = http.Client();
     var jsonBody = jsonEncode({
       'email': login,   // do dto,
@@ -23,15 +24,29 @@ class LoginApi {
       var response = await client.post(url, body: jsonBody,
           encoding: encoding, headers:header);
       if (response.statusCode == 200) {          // testa se o usuario foi encontrado: 200 = ok
+        Login login = Login();
         Map mapResponse = json.decode(response.body);  // transf. em json e poe no mapResponse
+        Login.nome = mapResponse['pessoa']['nome'];
+        Login.cpf = mapResponse['pessoa']['cpf'];
+        Login.email = mapResponse['pessoa']['email'];
+        Login.matricula = mapResponse['pessoa']['matricula'];
+        Login.rg = mapResponse['pessoa']['rg'];
+        Login.data_nasc = mapResponse['pessoa']['data_nasc'];
+        Login.email = mapResponse['pessoa']['email'];
+
+        login.login = true;
+
+
+
         prefs.setString("tokenjwt", mapResponse['toque']);
         print (mapResponse['toque']);
-        return true;
+        return login;
       }
+
     }
     finally {         // finally sempre é executado
       client.close();
     }
-    return false;     // usuário inválido
+    return null;     // usuário inválido
   }
 }

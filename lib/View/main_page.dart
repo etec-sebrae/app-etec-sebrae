@@ -255,34 +255,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
             ),
           ),
           SizedBox(height: 10.0),
-          //------Tentando inserir barra para cada container
-          // Stack(
-          //   children: <Widget>[
-          //     Padding(
-          //       padding: EdgeInsets.only(left: 10.0, right: 10.0),
-          //       child: Container(
-          //         decoration: BoxDecoration(
-          //             borderRadius: BorderRadius.circular(5.0),
-          //             color: Colors.green),
-          //         height: 10,
-          //         width: double.infinity,
-          //       ),
-          //     ),
-          //     AnimatedPositioned(
 
-          //       child: Padding(
-          //         padding: EdgeInsets.only(left: 10.0, right: 10.0),
-          //         child: Container(
-          //           decoration: BoxDecoration(
-          //               borderRadius: BorderRadius.circular(5.0),
-          //               color: corPrimaria),
-          //           height: 10,
-          //           width: 40,
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
           construirBotao(corSegundoIcon, 'Solicitar Documentos'),
           construirBotao(corTerceiroIcone, 'Enviar Documentos'),
           construirBotao(corQuartoIcone, 'Todos Documentos'),
