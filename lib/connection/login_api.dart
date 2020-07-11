@@ -34,7 +34,7 @@ class LoginApi {
         Login.matricula = mapResponse['pessoa']['matricula'];
         Login.rg = mapResponse['pessoa']['rg'];
         Login.data_nasc = mapResponse['pessoa']['data_nasc'];
-        Login.login = true;
+        login.login = true;
 
         return login;
       }
@@ -42,7 +42,7 @@ class LoginApi {
     finally {         // finally sempre é executado
       client.close();
     }
-    Login.login = false;
+    login.login = false;
     return login;     // usuário inválido
   }
 }

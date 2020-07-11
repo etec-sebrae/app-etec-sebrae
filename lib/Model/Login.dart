@@ -5,5 +5,5 @@ class Login {
   static String rg;
   static String email;
   static String data_nasc;
-  static bool login;
+  bool login;
 }

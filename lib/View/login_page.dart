@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
 
                           var prefs = await SharedPreferences.getInstance();
                           final token = prefs.getString('tokenjwt') ?? '';
-                          if (Login.login){
+                          if (retorno.login){
                             Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaInicial()));
                           } else {
                             _alertSnackBar('Invalido');

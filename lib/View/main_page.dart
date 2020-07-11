@@ -8,6 +8,7 @@ import 'package:seetec_projeto/Model/Widgets/construir_eventos.dart';
 import 'package:seetec_projeto/View/cadastro_page.dart';
 import 'package:seetec_projeto/Model/colors.dart';
 import 'package:seetec_projeto/View/enviar_documentos.dart';
+import 'package:seetec_projeto/View/perfil_page.dart';
 import 'package:seetec_projeto/View/solicitar_documento.dart';
 
 
@@ -50,10 +51,28 @@ class _PaginaInicialState extends State<PaginaInicial> {
     timeDilation = 2.0;
     return Scaffold(
       backgroundColor: corPrimaria,
-      appBar: AppBar(
-        title: Text('Etec SEBRAE'),
+      appBar: AppBar(title: Text('Etec SEBRAE'),
         centerTitle: true,
         backgroundColor: corPrimaria,
+        actions: <Widget>[
+          new IconButton(icon: new Icon(Icons.account_circle),
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PerfilPage()),
+              );
+            },
+          ),
+        ],
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
+        textTheme: TextTheme(
+            title: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+            )
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
