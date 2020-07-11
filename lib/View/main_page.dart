@@ -8,7 +8,9 @@ import 'package:seetec_projeto/Model/Widgets/construir_eventos.dart';
 import 'package:seetec_projeto/View/cadastro_page.dart';
 import 'package:seetec_projeto/Model/colors.dart';
 import 'package:seetec_projeto/View/enviar_documentos.dart';
+
 import 'package:seetec_projeto/View/perfil_page.dart';
+
 import 'package:seetec_projeto/View/solicitar_documento.dart';
 
 
