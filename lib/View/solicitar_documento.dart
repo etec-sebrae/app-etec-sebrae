@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'dart:convert' show utf8;
-
+import 'package:http/http.dart' as http;
+import 'package:seetec_projeto/Model/colors.dart';
 const urlCurso = "https://api-seetec.herokuapp.com/api/curso";
 const urlDocumento = "https://api-seetec.herokuapp.com/api/documentos";
 
@@ -12,17 +10,13 @@ class DocumentoPage extends StatefulWidget {
   _DocumentoPageState createState() => _DocumentoPageState();
 }
 
-class _DocumentoPageState extends  State<DocumentoPage>{
-  Color corInicioGradiente = const Color(0xff3747B2);
-  Color corFinalGradiente = const Color(0xff5165CB);
-
-  List<Documento> listaDocumentos = [] ;
-  List<Curso> listaCurso = [] ;
-  var _docItemSelected ;
+class _DocumentoPageState extends State<DocumentoPage> {
+  List<Documento> listaDocumentos = [];
+  List<Curso> listaCurso = [];
+  var _docItemSelected;
   String _docSelection;
-  var _curItemSelected ;
+  var _curItemSelected;
   String _curSelection;
-
 
   List<Documento> parseDocumentos(String responseBody) {
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
@@ -64,6 +58,11 @@ class _DocumentoPageState extends  State<DocumentoPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Enviar Documentos'),
+        centerTitle: true,
+        backgroundColor: corPrimaria,
+      ),
       resizeToAvoidBottomPadding: false,
       body: Container(
         padding: EdgeInsets.all(30.0),
@@ -76,11 +75,14 @@ class _DocumentoPageState extends  State<DocumentoPage>{
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Container(
-              width: 250.00,
-              child: Image.asset('assets/etec_sebrae.png'),
+              height: 150.0,
+              child: Image.asset('assets/logo_app.png'),
             ),
             TextFormField(
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.00),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16.00),
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 labelText: "Nome",
@@ -96,7 +98,10 @@ class _DocumentoPageState extends  State<DocumentoPage>{
               ),
             ),
             TextFormField(
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.00),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16.00),
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: "RA",
@@ -119,14 +124,13 @@ class _DocumentoPageState extends  State<DocumentoPage>{
                 height: 40.0,
                 width: 400.00,
                 child: RaisedButton(
-                  onPressed: () {
-                  },
+                  onPressed: () {},
                   child: Text("Solicitar documento  ",
-                  style: TextStyle(color: Colors.white, fontSize: 18.0)),
+                      style: TextStyle(color: Colors.white, fontSize: 18.0)),
                   color: Colors.indigoAccent,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7.0),
-                      side: BorderSide(color: Colors.indigoAccent),
+                    borderRadius: BorderRadius.circular(7.0),
+                    side: BorderSide(color: Colors.indigoAccent),
                   ),
                 ),
               ),
@@ -154,7 +158,6 @@ class _DocumentoPageState extends  State<DocumentoPage>{
             borderRadius: BorderRadius.circular(13.0),
           ),
         ),
-
         items: listaCurso.map((Curso map) {
           return DropdownMenuItem<String>(
             value: map.id.toString(),
@@ -193,7 +196,6 @@ class _DocumentoPageState extends  State<DocumentoPage>{
             borderRadius: BorderRadius.circular(13.0),
           ),
         ),
-
         items: listaDocumentos.map((Documento map) {
           return DropdownMenuItem<String>(
             value: map.id.toString(),
@@ -216,8 +218,6 @@ class _DocumentoPageState extends  State<DocumentoPage>{
   }
 }
 
-
-
 class Curso {
   int id;
   String nome;
@@ -234,10 +234,10 @@ class Curso {
   }
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "nome": nome,
-    "descricao": descricao,
-  };
+        "id": id,
+        "nome": nome,
+        "descricao": descricao,
+      };
 }
 
 class Documento {
@@ -256,10 +256,8 @@ class Documento {
   }
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "nome": nome,
-    "descricao": descricao,
-  };
+        "id": id,
+        "nome": nome,
+        "descricao": descricao,
+      };
 }
-
-

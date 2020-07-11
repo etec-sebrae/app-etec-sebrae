@@ -1,15 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:seetec_projeto/View/alerta.dart';
-//import 'package:seetec_projeto/View/alerta.dart';
 import 'package:seetec_projeto/View/main_page.dart';
-//import 'package:seetec_projeto/View/cadastro_page.dart';
 import 'package:seetec_projeto/connection/login_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'ResetSenha.dart';
-//import 'cadastro_page.dart';
-
+import 'package:seetec_projeto/Model/colors.dart';
+import 'package:seetec_projeto/Model/Login.dart';
 
 class LoginPage extends StatefulWidget {
 
@@ -18,40 +13,18 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  Color corInicioGradiente = const Color(0xff3747B2);
-  Color corFinalGradiente = const Color(0xff5165CB);
-  Color corPrimaria = const Color(0xff223249);
-  Color corSecundaria = const Color(0xff5263BB);
-  Color corContainer = const Color(0xff394BB1);
-  Color corContainerDescricaoInicio = const Color(0xff5264CB);
-  Color corContainerDescricaoFim = const Color(0xff3A4BB5);
-  Color corSegundoIcon = const Color(0xff394BB3);
-  Color corTerceiroIcone = const Color(0xff5165C6);
-  Color corQuartoIcone = const Color(0xff627BF2);
-  Color corQuintoIcone = const Color(0xff6BB5FE);
+
   TextEditingController login = TextEditingController();
   TextEditingController senha = TextEditingController();
-  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+  bool _isHidden = true;
 
-  void _alertSnackBar(
-    TextEditingController login, TextEditingController senha
-    ){
-  
-    final snackbar = SnackBar(
-      content: Text('Email ou senha invalida!!',
-        //'email digitado= '+ login.text + '\nsenha digitada= '+ senha.text,
-          textAlign: TextAlign.left, 
-          style: TextStyle(color: Colors.white,
-          backgroundColor: corPrimaria,)
-        ),
-      );
-      scaffoldKey.currentState.showSnackBar(snackbar);
-  }
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+   
 
   @override
   Widget build(BuildContext context) {
   var size = MediaQuery.of(context).size;
-  var appBar = AppBar (title: Text("Etec SEBRAE v0.1"),
+  var appBar = AppBar (title: Text("Etec SEBRAE v1"),
                         centerTitle: true,
                         backgroundColor: corPrimaria,);
   
@@ -62,107 +35,81 @@ class _LoginPageState extends State<LoginPage> {
       child: Column(
         children: <Widget>[
           Container(
-          height: size.height,
-          width: size.width,
-          decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                      colors: [corFinalGradiente, corInicioGradiente],
-                      tileMode: TileMode.repeated,
-                    )
-                ),
+            height: size.height - size.height/9,
+            width: size.width,
+            decoration: BoxDecoration(
+              color: corQuintoIcone,
+            ),
             child: Column(
               children: <Widget>[ 
               Container(
                 padding: EdgeInsets.all(30.0),
                 child: Image.asset('assets/logo_app.png'),
               ),
-              Container(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                child: TextField(
-                  autofocus: true,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: "Usuário:",
-                    hintText: "Digite o Email",
-                    labelStyle: TextStyle (color: Colors.white, fontSize: 24.0,),
-                  ),
-                  controller: login,
+              Expanded(
+                child: Container(
+                padding: EdgeInsets.all(20.0),
+                decoration: BoxDecoration(color: corSecundaria,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)), 
+                 ),
+                child: Column (
+                  children: <Widget> [
+                    Spacer(flex:1),
+                    Container(
+                      decoration: BoxDecoration(color: Colors.blue[700],
+                        borderRadius: new BorderRadius.circular(20.0)),
+                      child: _constroiTextField("Usuário"),
+                    ),
+                    Spacer(flex:1),
+                    Container(
+                      decoration: 
+                        BoxDecoration (color: Colors.blue[600],
+                          borderRadius: new BorderRadius.circular(20.0)),
+                      child: _constroiTextField("Senha"),
+                    ),
+                    Spacer(flex:1),
+                    Padding(
+                      padding: EdgeInsets.all(0),
+                      child: FlatButton(
+                        child: Text ("Esqueceu a senha?", textAlign: TextAlign.right,
+                      style: TextStyle(color: Colors.blue[100], fontSize: 20.0),),
+                          onPressed: () => _alertSnackBar('Esqueci'),
+                      ),
+                    ),
+                    Spacer(flex:1),  
+                    Container (
+                      child: RaisedButton(
+                        onPressed: () async {
+                          Login retorno = await LoginApi.postLogin(login.text, senha.text);
+
+                          var prefs = await SharedPreferences.getInstance();
+                          final token = prefs.getString('tokenjwt') ?? '';
+                          if (retorno.login){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaInicial()));
+                          } else {
+                            _alertSnackBar('Invalido');
+                          }
+                        },
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0),),
+                        child:Ink (
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(colors: <Color>[corTerceiroIcone, corQuintoIcone,],),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Container(
+                            height: 50.0, width: size.width/3,
+                            alignment: Alignment.center,
+                            child: Text("Entrar", style: TextStyle(color: Colors.white, fontSize: 25.0)),
+                          ),
+                        )
+                      ),
+                    ),
+                    Spacer(flex:2),
+                  ], 
                 ),
               ),
-              Container(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                child: TextField(
-                  keyboardType: TextInputType.text,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: "Senha:",
-                    labelStyle: TextStyle (color: Colors.white, fontSize: 24.0,),
-                    hintText: "Digite a senha"
-                  ),
-                  controller: senha,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(0),
-                child: FlatButton(
-                  child: Text ("Esqueci a senha", textAlign: TextAlign.right,
-                    style: TextStyle(color: Colors.blue, fontSize: 20.0),),
-                  onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ResetSenha()));
-                  },
-                )
-              ),
-              SizedBox (height: 10.0,),
-              Container (
-                height: 50.0, width: MediaQuery.of(context).size.width/3,
-                child: RaisedButton(
-                  onPressed: () async {
-                    bool retorno = await LoginApi.postLogin(login.text, senha.text);
-                    var prefs = await SharedPreferences.getInstance();
-                    final token = prefs.getString('tokenjwt') ?? '';
-                    print(token);
-                    if (retorno){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaInicial()));
-                    } else {
-                      _alertSnackBar(login, senha);
-                    }
-                  },
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0),),
-                  child:Ink (
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: <Color>[corTerceiroIcone, corQuintoIcone,],),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Text("Logar", style: TextStyle(color: Colors.white, fontSize: 25.0)),
-                    ),
-                  )
-                ),
-              ),
-   /*            SizedBox (height: 10.0,),
-              Container(
-                height: 50.0, width: MediaQuery.of(context).size.width/3,
-                child: RaisedButton(
-                  onPressed: () async {
-                    await Navigator.push(context, MaterialPageRoute(builder: (context) => PaginaCadastrar()));
-                  },   // onPressed
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0),),
-                  child:Ink (
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: <Color>[corTerceiroIcone, corQuintoIcone,],),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Text("Cadastrar", style: TextStyle(color: Colors.white, fontSize: 25.0)),
-                    ),
-                  ),
-                ),
-              ), */
+              ),      
               ],
             ),
           ),
@@ -170,6 +117,49 @@ class _LoginPageState extends State<LoginPage> {
       ),
     ),
   ); 
+  }
+  
+  void _alertSnackBar(String msg) {
+  
+    var mensagem = new Map();
+    mensagem["Invalido"] = "Email ou senha invalida!!"; 
+    mensagem["Esqueci"] = "Senha enviada para o email cadastrado";
+
+    final snackbar = SnackBar(
+      content: Text(mensagem[msg],
+          textAlign: TextAlign.left, 
+          style: TextStyle(color: Colors.white,
+          backgroundColor: corPrimaria,)
+        ),
+      );
+      scaffoldKey.currentState.showSnackBar(snackbar);
+  }
+
+  Widget _constroiTextField(String labelText){
+    return TextField(
+      keyboardType: TextInputType.text,
+      obscureText: labelText == "Senha" ? _isHidden: false,
+      decoration: 
+        InputDecoration(
+        hintText: labelText == "Usuário" ? "Digite o Email": "Digite a Senha",
+        hintStyle: TextStyle(
+          color: Colors.grey,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        prefixIcon: labelText == "Usuário" ? Icon(Icons.mail):Icon(Icons.lock),
+        suffixIcon: labelText == "Senha" ? IconButton(
+          onPressed: () {
+            setState(() => _isHidden = !_isHidden);
+          }, 
+          icon: Icon(Icons.visibility_off),
+        ):null,
+        labelText: labelText == "Usuário" ? "Usuário": "Senha:",
+        labelStyle: TextStyle (color: Colors.white, fontSize: 24.0,),
+      ),
+      controller: labelText == "Usuário" ? login: senha,
+    );
   }
 
 }
