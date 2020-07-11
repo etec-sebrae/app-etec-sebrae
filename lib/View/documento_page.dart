@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert' show utf8;
@@ -13,50 +13,53 @@ class DocumentoPage extends StatefulWidget {
 }
 
 class _DocumentoPageState extends  State<DocumentoPage>{
-  Curso _cursoSelecionado;
-  String _cursoSelec;
-  Documento _documentoSelecionado;
-
   Color corInicioGradiente = const Color(0xff3747B2);
   Color corFinalGradiente = const Color(0xff5165CB);
 
-  Future<List<Curso>> _cursos() async {
-    var response = await get(urlCurso);
-    String source = Utf8Decoder().convert(response.bodyBytes);
-    if (response.statusCode == 200) {
-      final items = json.decode(source).cast<Map<String, dynamic>>();
-      List<Curso> listaDeCursos = items.map<Curso>((json) {
-        return Curso.fromJson(json);
-      }).toList();
+  List<Documento> listaDocumentos = [] ;
+  List<Curso> listaCurso = [] ;
+  var _docItemSelected ;
+  String _docSelection;
+  var _curItemSelected ;
+  String _curSelection;
 
-      return listaDeCursos;
-    } else {
-      throw Exception('Failed to load internet');
-    }
+
+  List<Documento> parseDocumentos(String responseBody) {
+    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+    return parsed.map<Documento>((json) => Documento.fromJson(json)).toList();
   }
 
-  Future<List<Documento>> _documentos() async {
-    var response = await get(urlDocumento);
+  Future<List<Documento>> carregaDocumento() async {
+    final response = await http.get(urlDocumento);
     String source = Utf8Decoder().convert(response.bodyBytes);
-    if (response.statusCode == 200) {
-      final items = json.decode(source).cast<Map<String, dynamic>>();
-      List<Documento> listaDeDocumento = items.map<Documento>((json) {
-        return Documento.fromJson(json);
-      }).toList();
+    final responsebody = parseDocumentos(source);
+    setState(() {
+      listaDocumentos = responsebody;
+    });
+    return parseDocumentos(response.body);
+  }
 
-      return listaDeDocumento;
-    } else {
-      throw Exception('Failed to load internet');
-    }
+  List<Curso> parseCursos(String responseBody) {
+    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+    return parsed.map<Curso>((json) => Curso.fromJson(json)).toList();
+  }
+
+  Future<List<Curso>> carregaCurso() async {
+    final response = await http.get(urlCurso);
+    String source = Utf8Decoder().convert(response.bodyBytes);
+    final responsebody = parseCursos(response.body);
+    setState(() {
+      listaCurso = responsebody;
+    });
+    return parseCursos(response.body);
   }
 
   @override
   void initState() {
-    _documentoSelecionado = null;
     super.initState();
+    carregaCurso();
+    carregaDocumento();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -108,77 +111,8 @@ class _DocumentoPageState extends  State<DocumentoPage>{
                 ),
               ),
             ),
-            FutureBuilder<List<Curso>>(
-                  future: _cursos(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Curso>> snapshot) {
-                    if (!snapshot.hasData) return CircularProgressIndicator();
-                    return DropdownButtonFormField<Curso>(
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16.00),
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.all(8),
-                        //hintText: "Selecione seu documento...",
-                        hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 2.0),
-                          borderRadius: BorderRadius.circular(13.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 2.0),
-                          borderRadius: BorderRadius.circular(13.0),
-                        ),
-                      ),
-                      hint: Text('Selecione o curso'),
-                      //value: _cursoSelecionado
-                      items: snapshot.data
-                          .map((cur) => DropdownMenuItem(
-                          child: Text(cur.nome),
-                          value: cur,
-                          ))
-                         .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _cursoSelecionado = value;
-                        });
-                      },
-                    );
-                  }),
-            FutureBuilder<List<Documento>>(
-                future: _documentos(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<Documento>> snapshot) {
-                  if (!snapshot.hasData) return CircularProgressIndicator();
-                  return DropdownButtonFormField<Documento>(
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16.00),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(8),
-                      //hintText: "Selecione seu documento...",
-                      hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 2.0),
-                        borderRadius: BorderRadius.circular(13.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 2.0),
-                        borderRadius: BorderRadius.circular(13.0),
-                      ),
-                    ),
-                    hint: Text('Selecione o documento'),
-                    //value: _documentoSelecionado,
-                    items: snapshot.data
-                        .map((doc) => DropdownMenuItem(
-                        value: doc,
-                        child: Text(doc.nome),
-                      ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _documentoSelecionado = value;
-                      });
-                    },
-
-                  );
-                }),
+            cursoList(),
+            documentoList(),
             Padding(
               padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
               child: Container(
@@ -203,8 +137,86 @@ class _DocumentoPageState extends  State<DocumentoPage>{
     );
   }
 
+  Widget cursoList() {
+    return Container(
+      // color: Colors.black,
+      child: DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          hintText: 'Selecione o curso',
+          contentPadding: EdgeInsets.all(8),
+          hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2.0),
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2.0),
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+        ),
 
+        items: listaCurso.map((Curso map) {
+          return DropdownMenuItem<String>(
+            value: map.id.toString(),
+            child: Text(
+              map.nome,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String newValueSelected) {
+          setState(() {
+            this._curItemSelected = newValueSelected;
+          });
+        },
+        value: _curItemSelected,
+      ),
+    );
+  }
+
+  Widget documentoList() {
+    return Container(
+      // color: Colors.black,
+      child: DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          hintText: 'Selecione o documento',
+          contentPadding: EdgeInsets.all(8),
+          hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2.0),
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2.0),
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+        ),
+
+        items: listaDocumentos.map((Documento map) {
+          return DropdownMenuItem<String>(
+            value: map.id.toString(),
+            child: Text(
+              map.nome,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String newValueSelected) {
+          setState(() {
+            this._docItemSelected = newValueSelected;
+          });
+        },
+        value: _docItemSelected,
+      ),
+    );
+  }
 }
+
+
 
 class Curso {
   int id;
@@ -220,6 +232,12 @@ class Curso {
       descricao: json['descricao'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "nome": nome,
+    "descricao": descricao,
+  };
 }
 
 class Documento {
@@ -236,4 +254,12 @@ class Documento {
       descricao: json['descricao'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "nome": nome,
+    "descricao": descricao,
+  };
 }
+
+
