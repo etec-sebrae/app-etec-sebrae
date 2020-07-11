@@ -1,251 +1,265 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'dart:convert' show utf8;
 
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:seetec_projeto/Model/config_file.dart';
-import 'package:seetec_projeto/Model/colors.dart';
+const urlCurso = "https://api-seetec.herokuapp.com/api/curso";
+const urlDocumento = "https://api-seetec.herokuapp.com/api/documentos";
 
-class EnviarDocumentos extends StatefulWidget {
-  
+class DocumentoPage extends StatefulWidget {
   @override
-  _EnviarDocumentosState createState() => _EnviarDocumentosState();
+  _DocumentoPageState createState() => _DocumentoPageState();
 }
 
-class _EnviarDocumentosState extends State<EnviarDocumentos> {
+class _DocumentoPageState extends  State<DocumentoPage>{
+  Color corInicioGradiente = const Color(0xff3747B2);
+  Color corFinalGradiente = const Color(0xff5165CB);
+
+  List<Documento> listaDocumentos = [] ;
+  List<Curso> listaCurso = [] ;
+  var _docItemSelected ;
+  String _docSelection;
+  var _curItemSelected ;
+  String _curSelection;
 
 
-  TextEditingController _controllerRA = TextEditingController();
-  TextEditingController _controllerNome = TextEditingController();
-
-  final formKey = new GlobalKey<FormState>();
-
-  Gradient gradiente() {
-    return LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [corFinalGradiente, corInicioGradiente],
-      tileMode: TileMode.repeated,
-    );
+  List<Documento> parseDocumentos(String responseBody) {
+    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+    return parsed.map<Documento>((json) => Documento.fromJson(json)).toList();
   }
 
-  Widget criarBotao(String titulo, TextEditingController controller, String hint,[TextInputType keyboard]) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboard,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(color: Colors.black, width: 1.0)),
-        enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 1.0)),
-        labelText: titulo,
-        labelStyle: TextStyle(color: Colors.white),
-        hintText: hint,
-      ),
-      style: TextStyle(
-          color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.w300),
-    );
+  Future<List<Documento>> carregaDocumento() async {
+    final response = await http.get(urlDocumento);
+    String source = Utf8Decoder().convert(response.bodyBytes);
+    final responsebody = parseDocumentos(source);
+    setState(() {
+      listaDocumentos = responsebody;
+    });
+    return parseDocumentos(response.body);
   }
 
-  var _cursos = [
-    "Informática",
-    "Redes",
-    "Administração",
-    "Mecatrônica",
-    "Enfergagem",
-    "Análise e Desenvolvimento de Sistemas",
-    "Design Interiores",
-    "Especialização mobile"
-  ];
+  List<Curso> parseCursos(String responseBody) {
+    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+    return parsed.map<Curso>((json) => Curso.fromJson(json)).toList();
+  }
 
-String _arquivo;
-  String _caminho;
-  Map<String, String> _caminhos;
-  String _extensao;
-  bool _carregandoCaminho = false;
-  FileType _escolhendoTipo = FileType.any;
-  TextEditingController _controller = new TextEditingController();
+  Future<List<Curso>> carregaCurso() async {
+    final response = await http.get(urlCurso);
+    String source = Utf8Decoder().convert(response.bodyBytes);
+    final responsebody = parseCursos(response.body);
+    setState(() {
+      listaCurso = responsebody;
+    });
+    return parseCursos(response.body);
+  }
 
-   @override
+  @override
   void initState() {
     super.initState();
-    _controller.addListener(() => _extensao = _controller.text);
-    Theme(
-      data: ThemeData(hintColor: Colors.white,primaryColor: Colors.black),
-      child: Container(),
-    );
+    carregaCurso();
+    carregaDocumento();
   }
-
-  void _abrirDocumentos() async {
-    setState(() => _carregandoCaminho = true);
-    try {
-        _caminhos = null;
-        _caminho = await FilePicker.getFilePath(
-            type: _escolhendoTipo,
-            allowedExtensions: (_extensao?.isNotEmpty ?? false)
-                ? _extensao?.replaceAll(' ', '')?.split(',')
-                : null);
-    } on PlatformException catch (e) {
-      print("Operação não suportada" + e.toString());
-    }
-    if (!mounted) return;
-    setState(() {
-        _carregandoCaminho = true;
-      _arquivo = _caminho != null
-          ? _caminho.split('/').last
-          : _caminhos != null ? _caminhos.keys.toString() : '...';
-      print(_arquivo);
-      nomeDoArquivo = _arquivo;
-      return nomeDoArquivo = _arquivo;
-    });
-  }
-
-  String nomeDoArquivo = '';
-
-  var _valorSelecionado;
-  bool pressionado;
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Enviar Documentos'),
-        centerTitle: true,
-        backgroundColor: corPrimaria,
-      ),
+      resizeToAvoidBottomPadding: false,
       body: Container(
-        height: double.infinity,
-        width: double.infinity,
+        padding: EdgeInsets.all(30.0),
         decoration: BoxDecoration(
-          gradient: gradiente(),
-        ),
-        child: SingleChildScrollView(
-            child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 10.0),
-                child: Image.asset(
-                  'assets/logo_app.png',
-                  height: 140.0,
-                ),
-              ),
-              SizedBox(height: SizeConfig.blockSizeVertical*1),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 40.0, right: 40.0, bottom: 8.0),
-                child: criarBotao('Nome', _controllerNome, 'Insira seu nome'),
-              ),
-              SizedBox(height: SizeConfig.blockSizeVertical*1),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 40.0, right: 40.0, top: 8.0, bottom: 8.0),
-                child: criarBotao('RA', _controllerRA, 'Insira seu RA',TextInputType.number),
-              ),
-              SizedBox(height: SizeConfig.blockSizeVertical*1),
-              Padding(
-                padding: EdgeInsets.only(
-                    left: 40.0, right: 40.0, top: 8.0, bottom: 12.0),
-                child: FormField<String>(
-                  builder: (FormFieldState<String> state) {
-                    return InputDecorator(
-                      decoration: InputDecoration(
-                        labelText: 'Cursos',
-                        labelStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w500),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 2.0)),
-                      ),
-                      isEmpty: _valorSelecionado == '',
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          hint: Text('Selecione seu curso'),
-                          dropdownColor: corPrimaria,
-                          iconEnabledColor: Colors.white,
-                          iconSize: 30.0,
-                          style: TextStyle(color: Colors.white),
-                          value: _valorSelecionado,
-                          isDense: true,
-                          onChanged: (String newValue) {
-                            setState(() {
-                              _valorSelecionado = newValue;
-                              state.didChange(newValue);
-                            });
-                          },
-                          items: _cursos.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 16.0),
-                child: Container(
-                  width: 400,
-                  height: 100,
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 50.0, right: 15.0),
-                        child: SvgPicture.asset(
-                          'assets/upload_botao.svg',
-                          color: Colors.black,
-                          width: 30,
-                          height: 30,
-                        ),
-                      ),
-                      RaisedButton(
-                        padding: EdgeInsets.only(right: 10.0, bottom: 12.0,top: 12.0),
-                        textColor: Colors.white,
-                        color: corBotao,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0)),
-                        onPressed: _abrirDocumentos,
-                        child: Text('   Clique para selecionar seu documento'),
-                      ),
-                    ],
-                  ),
-                ), 
-              ),
-              Text(_carregandoCaminho ? 'Arquivo ' + '"'+ nomeDoArquivo + '"' + ' selecionado' : 'Nenhum arquivo selecionado',style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0
-              ),),
-              SizedBox(height: SizeConfig.blockSizeVertical*4),
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(left: 8.0,right: 8.0,top: 28.0),
-                    child: SizedBox(
-                      width: SizeConfig.blockSizeHorizontal*96,
-                      height: SizeConfig.blockSizeVertical*5,
-                      child: RaisedButton(
-                        color: corBotao,
-                        textColor: Colors.white,
-                        onPressed: (){},
-                        child: Text('Enviar Documento',
-                        style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          gradient: LinearGradient(
+            colors: [corFinalGradiente, corInicioGradiente],
           ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Container(
+              width: 250.00,
+              child: Image.asset('assets/etec_sebrae.png'),
+            ),
+            TextFormField(
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.00),
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                labelText: "Nome",
+                labelStyle: TextStyle(color: Colors.white, fontSize: 18.00),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black, width: 2.0),
+                  borderRadius: BorderRadius.circular(13.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black, width: 2.0),
+                  borderRadius: BorderRadius.circular(13.0),
+                ),
+              ),
+            ),
+            TextFormField(
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.00),
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: "RA",
+                labelStyle: TextStyle(color: Colors.white, fontSize: 18.00),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black, width: 2.0),
+                  borderRadius: BorderRadius.circular(13.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black, width: 2.0),
+                  borderRadius: BorderRadius.circular(13.0),
+                ),
+              ),
+            ),
+            cursoList(),
+            documentoList(),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+              child: Container(
+                height: 40.0,
+                width: 400.00,
+                child: RaisedButton(
+                  onPressed: () {
+                  },
+                  child: Text("Solicitar documento  ",
+                      style: TextStyle(color: Colors.white, fontSize: 18.0)),
+                  color: Colors.indigoAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(7.0),
+                    side: BorderSide(color: Colors.indigoAccent),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+  Widget cursoList() {
+    return Container(
+      // color: Colors.black,
+      child: DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          hintText: 'Selecione o curso',
+          contentPadding: EdgeInsets.all(8),
+          hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2.0),
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2.0),
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+        ),
+
+        items: listaCurso.map((Curso map) {
+          return DropdownMenuItem<String>(
+            value: map.id.toString(),
+            child: Text(
+              map.nome,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String newValueSelected) {
+          setState(() {
+            this._curItemSelected = newValueSelected;
+          });
+        },
+        value: _curItemSelected,
+      ),
+    );
+  }
+
+  Widget documentoList() {
+    return Container(
+      // color: Colors.black,
+      child: DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          hintText: 'Selecione o documento',
+          contentPadding: EdgeInsets.all(8),
+          hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2.0),
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2.0),
+            borderRadius: BorderRadius.circular(13.0),
+          ),
+        ),
+
+        items: listaDocumentos.map((Documento map) {
+          return DropdownMenuItem<String>(
+            value: map.id.toString(),
+            child: Text(
+              map.nome,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String newValueSelected) {
+          setState(() {
+            this._docItemSelected = newValueSelected;
+          });
+        },
+        value: _docItemSelected,
+      ),
+    );
+  }
 }
+
+
+
+class Curso {
+  int id;
+  String nome;
+  String descricao;
+
+  Curso({this.id, this.nome, this.descricao});
+
+  factory Curso.fromJson(Map<String, dynamic> json) {
+    return Curso(
+      id: json['id'],
+      nome: json['nome'],
+      descricao: json['descricao'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "nome": nome,
+    "descricao": descricao,
+  };
+}
+
+class Documento {
+  int id;
+  String nome;
+  String descricao;
+
+  Documento({this.id, this.nome, this.descricao});
+
+  factory Documento.fromJson(Map<String, dynamic> json) {
+    return Documento(
+      id: json['id'],
+      nome: json['nome'],
+      descricao: json['descricao'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "nome": nome,
+    "descricao": descricao,
+  };
+}
+
+
