@@ -12,3 +12,4 @@ Color corTerceiroIcone = const Color(0xff5165C6);
 Color corQuartoIcone = const Color(0xff627BF2);
 Color corQuintoIcone = const Color(0xff6BB5FE);
 Color corBotao = const Color(0xff192965);
+Color corBotao2 = const Color(0xff4B5DC5);

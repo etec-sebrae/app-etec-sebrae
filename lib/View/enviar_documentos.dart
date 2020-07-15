@@ -2,7 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:seetec_projeto/Model/Curso.dart';
+import 'package:seetec_projeto/Model/Documento.dart';
 import 'dart:convert' show utf8;
+
+import 'package:seetec_projeto/Model/colors.dart';
+import 'package:seetec_projeto/Model/config_file.dart';
 
 const urlCurso = "https://api-seetec.herokuapp.com/api/curso";
 const urlDocumento = "https://api-seetec.herokuapp.com/api/documentos";
@@ -12,17 +17,13 @@ class DocumentoPage extends StatefulWidget {
   _DocumentoPageState createState() => _DocumentoPageState();
 }
 
-class _DocumentoPageState extends  State<DocumentoPage>{
-  Color corInicioGradiente = const Color(0xff3747B2);
-  Color corFinalGradiente = const Color(0xff5165CB);
-
-  List<Documento> listaDocumentos = [] ;
-  List<Curso> listaCurso = [] ;
-  var _docItemSelected ;
+class _DocumentoPageState extends State<DocumentoPage> {
+  List<Documento> listaDocumentos = [];
+  List<Curso> listaCurso = [];
+  var _docItemSelected;
   String _docSelection;
-  var _curItemSelected ;
+  var _curItemSelected;
   String _curSelection;
-
 
   List<Documento> parseDocumentos(String responseBody) {
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
@@ -63,75 +64,98 @@ class _DocumentoPageState extends  State<DocumentoPage>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: Container(
-        padding: EdgeInsets.all(30.0),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [corFinalGradiente, corInicioGradiente],
-          ),
+    SizeConfig().init(context);
+
+    return Theme(
+      data: ThemeData(hintColor: Colors.white),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Solicitar Documento'),
+          backgroundColor: corPrimaria,
+          centerTitle: true,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Container(
-              width: 250.00,
-              child: Image.asset('assets/etec_sebrae.png'),
+        resizeToAvoidBottomPadding: false,
+        body: Container(
+          padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 30.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [corFinalGradiente, corInicioGradiente],
             ),
-            TextFormField(
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.00),
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                labelText: "Nome",
-                labelStyle: TextStyle(color: Colors.white, fontSize: 18.00),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  borderRadius: BorderRadius.circular(13.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  borderRadius: BorderRadius.circular(13.0),
-                ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Container(
+                height: 160,
+                child: Image.asset('assets/logo_app.png'),
               ),
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16.00),
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "RA",
-                labelStyle: TextStyle(color: Colors.white, fontSize: 18.00),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  borderRadius: BorderRadius.circular(13.0),
+              TextFormField(
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 16.00,
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                  borderRadius: BorderRadius.circular(13.0),
-                ),
-              ),
-            ),
-            cursoList(),
-            documentoList(),
-            Padding(
-              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-              child: Container(
-                height: 40.0,
-                width: 400.00,
-                child: RaisedButton(
-                  onPressed: () {
-                  },
-                  child: Text("Solicitar documento  ",
-                      style: TextStyle(color: Colors.white, fontSize: 18.0)),
-                  color: Colors.indigoAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(7.0),
-                    side: BorderSide(color: Colors.indigoAccent),
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  labelText: "Nome",
+                  labelStyle: TextStyle(color: Colors.white, fontSize: 20.0),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 1.0),
+                    borderRadius: BorderRadius.circular(13.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 1.0),
+                    borderRadius: BorderRadius.circular(13.0),
                   ),
                 ),
               ),
-            ),
-          ],
+              TextFormField(
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 16.00),
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "RA",
+                  labelStyle: TextStyle(color: Colors.white, fontSize: 18.00),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 1.2),
+                    borderRadius: BorderRadius.circular(13.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 1.2),
+                    borderRadius: BorderRadius.circular(13.0),
+                  ),
+                ),
+              ),
+              cursoList(),
+              documentoList(),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      height: 50.0,
+                      child: RaisedButton(
+                        onPressed: () {},
+                        child: Text("Solicitar documento  ",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.bold)),
+                        color: corBotao,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -140,38 +164,40 @@ class _DocumentoPageState extends  State<DocumentoPage>{
   Widget cursoList() {
     return Container(
       // color: Colors.black,
-      child: DropdownButtonFormField<String>(
+      child: InputDecorator(
         decoration: InputDecoration(
-          hintText: 'Selecione o curso',
-          contentPadding: EdgeInsets.all(8),
-          hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 2.0),
-            borderRadius: BorderRadius.circular(13.0),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 2.0),
-            borderRadius: BorderRadius.circular(13.0),
+          labelText: 'Cursos',
+          labelStyle: TextStyle(
+              color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.w500),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0),
+              borderSide: BorderSide(color: Colors.black, width: 2.0)),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            hint: Text('Selecione seu curso'),
+            dropdownColor: corPrimaria,
+            iconEnabledColor: Colors.white,
+            iconSize: 30.0,
+            style: TextStyle(color: Colors.white, fontSize: 16.0),
+            isDense: true,
+            items: listaCurso.map((Curso map) {
+              return DropdownMenuItem<String>(
+                value: map.id.toString(),
+                child: Text(
+                  map.nome,
+                  style: TextStyle(color: Colors.white, fontSize: 16.0),
+                ),
+              );
+            }).toList(),
+            onChanged: (String newValueSelected) {
+              setState(() {
+                this._curItemSelected = newValueSelected;
+              });
+            },
+            value: _curItemSelected,
           ),
         ),
-
-        items: listaCurso.map((Curso map) {
-          return DropdownMenuItem<String>(
-            value: map.id.toString(),
-            child: Text(
-              map.nome,
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-          );
-        }).toList(),
-        onChanged: (String newValueSelected) {
-          setState(() {
-            this._curItemSelected = newValueSelected;
-          });
-        },
-        value: _curItemSelected,
       ),
     );
   }
@@ -179,87 +205,43 @@ class _DocumentoPageState extends  State<DocumentoPage>{
   Widget documentoList() {
     return Container(
       // color: Colors.black,
-      child: DropdownButtonFormField<String>(
+      child: InputDecorator(
         decoration: InputDecoration(
-          hintText: 'Selecione o documento',
-          contentPadding: EdgeInsets.all(8),
-          hintStyle: TextStyle(color: Colors.white, fontSize: 18.00),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 2.0),
-            borderRadius: BorderRadius.circular(13.0),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black, width: 2.0),
-            borderRadius: BorderRadius.circular(13.0),
+          labelText: 'Documentos',
+          labelStyle: TextStyle(
+              color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.w500),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0),
+              borderSide: BorderSide(color: Colors.black, width: 2.0)),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            hint: Text('Selecione seu documento'),
+            dropdownColor: corPrimaria,
+            iconEnabledColor: Colors.white,
+            iconSize: 30.0,
+            style: TextStyle(color: Colors.white, fontSize: 16.0),
+            isDense: true,
+            items: listaDocumentos.map((Documento map) {
+              return DropdownMenuItem<String>(
+                value: map.id.toString(),
+                child: Text(
+                  map.nome,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (String newValueSelected) {
+              setState(() {
+                this._docItemSelected = newValueSelected;
+              });
+            },
+            value: _docItemSelected,
           ),
         ),
-
-        items: listaDocumentos.map((Documento map) {
-          return DropdownMenuItem<String>(
-            value: map.id.toString(),
-            child: Text(
-              map.nome,
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-          );
-        }).toList(),
-        onChanged: (String newValueSelected) {
-          setState(() {
-            this._docItemSelected = newValueSelected;
-          });
-        },
-        value: _docItemSelected,
       ),
     );
   }
 }
-
-
-
-class Curso {
-  int id;
-  String nome;
-  String descricao;
-
-  Curso({this.id, this.nome, this.descricao});
-
-  factory Curso.fromJson(Map<String, dynamic> json) {
-    return Curso(
-      id: json['id'],
-      nome: json['nome'],
-      descricao: json['descricao'],
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "nome": nome,
-    "descricao": descricao,
-  };
-}
-
-class Documento {
-  int id;
-  String nome;
-  String descricao;
-
-  Documento({this.id, this.nome, this.descricao});
-
-  factory Documento.fromJson(Map<String, dynamic> json) {
-    return Documento(
-      id: json['id'],
-      nome: json['nome'],
-      descricao: json['descricao'],
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "nome": nome,
-    "descricao": descricao,
-  };
-}
-
-
