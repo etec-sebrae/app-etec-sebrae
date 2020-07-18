@@ -1,4 +1,5 @@
 class Login {
+  static int    id;
   static String nome;
   static String cpf;
   static int    matricula;

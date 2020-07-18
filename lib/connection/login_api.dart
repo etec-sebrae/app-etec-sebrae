@@ -27,7 +27,10 @@ class LoginApi {
       if (response.statusCode == 200) {          // testa se o usuario foi encontrado: 200 = ok  
         Map mapResponse = json.decode(response.body);  // transf. em json e poe no mapResponse
         prefs.setString("tokenjwt", mapResponse['toque']);
-        print (mapResponse['toque']);
+        
+
+        Login.id = mapResponse['pessoa']['id'];
+        print (Login.id);
         Login.nome = mapResponse['pessoa']['nome'];
         Login.cpf = mapResponse['pessoa']['cpf'];
         Login.email = mapResponse['pessoa']['email'];
@@ -38,11 +41,13 @@ class LoginApi {
 
         return login;
       }
+      else{
+        login.login= false;
+      }
     }
     finally {         // finally sempre é executado
       client.close();
     }
-    login.login = true;
     return login;     // usuário inválido
   }
 }

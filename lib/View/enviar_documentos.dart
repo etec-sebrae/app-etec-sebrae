@@ -8,6 +8,9 @@ import 'dart:convert' show utf8;
 
 import 'package:seetec_projeto/Model/colors.dart';
 import 'package:seetec_projeto/Model/config_file.dart';
+import 'package:seetec_projeto/connection/enviar_documento_api.dart';
+
+import '../Model/Login.dart';
 
 const urlCurso = "https://api-seetec.herokuapp.com/api/curso";
 const urlDocumento = "https://api-seetec.herokuapp.com/api/documentos";
@@ -17,12 +20,18 @@ class DocumentoPage extends StatefulWidget {
   _DocumentoPageState createState() => _DocumentoPageState();
 }
 
+final formKey = new GlobalKey<FormState>();
+ var _curItemSelected;
+
 class _DocumentoPageState extends State<DocumentoPage> {
   List<Documento> listaDocumentos = [];
   List<Curso> listaCurso = [];
+
+
+  
   var _docItemSelected;
   String _docSelection;
-  var _curItemSelected;
+ 
   String _curSelection;
 
   List<Documento> parseDocumentos(String responseBody) {
@@ -48,7 +57,7 @@ class _DocumentoPageState extends State<DocumentoPage> {
   Future<List<Curso>> carregaCurso() async {
     final response = await http.get(urlCurso);
     String source = Utf8Decoder().convert(response.bodyBytes);
-    final responsebody = parseCursos(response.body);
+    final responsebody = parseCursos(source);
     setState(() {
       listaCurso = responsebody;
     });
@@ -92,6 +101,8 @@ class _DocumentoPageState extends State<DocumentoPage> {
                 child: Image.asset('assets/logo_app.png'),
               ),
               TextFormField(
+               
+                initialValue: Login.nome,
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w300,
@@ -112,6 +123,7 @@ class _DocumentoPageState extends State<DocumentoPage> {
                 ),
               ),
               TextFormField(
+                initialValue: Login.matricula.toString(),
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w300,
@@ -138,7 +150,25 @@ class _DocumentoPageState extends State<DocumentoPage> {
                     child: Container(
                       height: 50.0,
                       child: RaisedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          bool retorno = await EnviarDocumento.postSolicitacao(
+                              Login.id,
+                              int.parse(_curItemSelected),
+                              int.parse(_docItemSelected));
+                              
+
+                          if (retorno) {
+                            setState(() {
+                              _curItemSelected = null;
+                              _docItemSelected = null;
+                            });
+                            mensagem(
+                                context, "Documento solicitado com sucesso!");
+                          } else {
+                            mensagem(context,
+                                "Não foi possível solicitar o documento!");
+                          }
+                        },
                         child: Text("Solicitar documento  ",
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -175,7 +205,7 @@ class _DocumentoPageState extends State<DocumentoPage> {
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
-            hint: Text('Selecione seu curso'),
+            hint: _curItemSelected == null ? Text('Selecione seu curso') : Text(_curItemSelected),
             dropdownColor: corPrimaria,
             iconEnabledColor: Colors.white,
             iconSize: 30.0,
@@ -192,7 +222,7 @@ class _DocumentoPageState extends State<DocumentoPage> {
             }).toList(),
             onChanged: (String newValueSelected) {
               setState(() {
-                this._curItemSelected = newValueSelected;
+                _curItemSelected = newValueSelected;
               });
             },
             value: _curItemSelected,
@@ -216,7 +246,7 @@ class _DocumentoPageState extends State<DocumentoPage> {
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
-            hint: Text('Selecione seu documento'),
+            hint: _docItemSelected == null ? Text('Selecione seu documento') : Text(_docItemSelected),
             dropdownColor: corPrimaria,
             iconEnabledColor: Colors.white,
             iconSize: 30.0,
@@ -244,4 +274,28 @@ class _DocumentoPageState extends State<DocumentoPage> {
       ),
     );
   }
+}
+
+void mensagem(BuildContext context, String msg) {
+  Widget okButton = FlatButton(
+    child: Text("OK"),
+    onPressed: () {
+      Navigator.pop(context);
+    },
+  );
+
+  AlertDialog alerta = AlertDialog(
+    title: Text("Atenção"),
+    content: Text(msg),
+    actions: [
+      okButton,
+    ],
+  );
+  // exibe o dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alerta;
+    },
+  );
 }
