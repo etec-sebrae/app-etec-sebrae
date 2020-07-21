@@ -189,7 +189,6 @@ class _EnviarDocumentosState extends State<EnviarDocumentos> {
                           hint: _valorSelecionado == null
                               ? Text('Escolha um curso')
                               : Text(_valorSelecionado),
-                          dropdownColor: corPrimaria,
                           iconEnabledColor: Colors.white,
                           iconSize: 30.0,
                           style: TextStyle(color: Colors.white),

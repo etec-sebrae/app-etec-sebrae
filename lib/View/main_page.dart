@@ -30,9 +30,9 @@ class _PaginaInicialState extends State<PaginaInicial> {
   
   Future<List<dynamic>> carregarLista() async {
     Response response = await get(urlEvento);
-
+    String source = Utf8Decoder().convert(response.bodyBytes);
     if (response.body.isNotEmpty) {
-      Map retorno = json.decode(response.body);
+      Map retorno = json.decode(source);
       eventos = [];
       for (int x = 0; x < retorno['content'].length; x++) {
         Map<String, dynamic> evento = Map();

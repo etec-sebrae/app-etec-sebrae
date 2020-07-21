@@ -206,7 +206,6 @@ class _DocumentoPageState extends State<DocumentoPage> {
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
             hint: _curItemSelected == null ? Text('Selecione seu curso') : Text(_curItemSelected),
-            dropdownColor: corPrimaria,
             iconEnabledColor: Colors.white,
             iconSize: 30.0,
             style: TextStyle(color: Colors.white, fontSize: 16.0),
@@ -247,7 +246,6 @@ class _DocumentoPageState extends State<DocumentoPage> {
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
             hint: _docItemSelected == null ? Text('Selecione seu documento') : Text(_docItemSelected),
-            dropdownColor: corPrimaria,
             iconEnabledColor: Colors.white,
             iconSize: 30.0,
             style: TextStyle(color: Colors.white, fontSize: 16.0),
