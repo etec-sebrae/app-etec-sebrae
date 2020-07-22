@@ -11,6 +11,7 @@ import 'package:seetec_projeto/View/cadastro_page.dart';
 import 'package:seetec_projeto/View/perfil_page.dart';
 import 'package:seetec_projeto/View/solicitar_documento.dart';
 import 'package:seetec_projeto/View/enviar_documentos.dart';
+import 'package:seetec_projeto/View/status_page.dart';
 
 
 import 'enviar_documentos.dart';
@@ -31,8 +32,10 @@ class _PaginaInicialState extends State<PaginaInicial> {
   Future<List<dynamic>> carregarLista() async {
     Response response = await get(urlEvento);
 
+    String source = Utf8Decoder().convert(response.bodyBytes);
+
     if (response.body.isNotEmpty) {
-      Map retorno = json.decode(response.body);
+      Map retorno = json.decode(source);
       eventos = [];
       for (int x = 0; x < retorno['content'].length; x++) {
         Map<String, dynamic> evento = Map();
@@ -126,9 +129,10 @@ class _PaginaInicialState extends State<PaginaInicial> {
           SizedBox(height: 10.0),
           
           construirBotao(corSegundoIcon, 'Solicitar Documentos',DocumentoPage(),context),
+          SizedBox(height: 10.0,),
           construirBotao(corTerceiroIcone, 'Enviar Documentos',EnviarDocumentos(),context),
-          construirBotao(corQuartoIcone, 'Todos Documentos',PaginaCadastrar(),context),
-          construirBotao(corQuintoIcone, 'Meus Documentos',PaginaCadastrar(),context),
+          SizedBox(height: 10.0,),
+          construirBotao(corQuartoIcone, 'Todos Documentos',StatusPage(),context),
         ],
       ),
     );

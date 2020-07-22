@@ -6,5 +6,7 @@ class Login {
   static String rg;
   static String email;
   static String data_nasc;
+  static String tipo;
+  static String Cursoaluno;
   bool login;
 }
