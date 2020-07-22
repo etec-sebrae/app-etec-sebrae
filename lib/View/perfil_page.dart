@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:seetec_projeto/Model/Login.dart';
 import 'package:http/http.dart' as http;
+import 'package:seetec_projeto/Model/Login.dart';
+import 'package:seetec_projeto/Model/Login.dart';
 
 class PerfilPage extends StatefulWidget {
   @override
@@ -17,7 +19,10 @@ class _PerfilPageState extends State<PerfilPage> {
   String _nomealunoperfil = Login.nome;
   int _matriculaperfil = Login.matricula;
   String _emailperfil = Login.email;
-  //String _cursoperfil = Login.;
+
+  String _cursoperfil = Login.Cursoaluno;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +81,7 @@ class _PerfilPageState extends State<PerfilPage> {
               child: ListTile(
 
                 title: Text('Curso:', style: TextStyle(fontSize: 12), ),
-                //subtitle: Text(_cursoperfil,  style: TextStyle(fontSize: 18),),
+                subtitle: Text(_cursoperfil,  style: TextStyle(fontSize: 18),),
               ),
             ),
           ],

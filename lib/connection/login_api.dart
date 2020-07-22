@@ -37,6 +37,14 @@ class LoginApi {
         Login.matricula = mapResponse['pessoa']['matricula'];
         Login.rg = mapResponse['pessoa']['rg'];
         Login.data_nasc = mapResponse['pessoa']['data_nasc'];
+        Login.tipo = mapResponse['pessoa']['tipo'];
+
+        if (Login.tipo == "ALUNO") {
+          Login.Cursoaluno = mapResponse['pessoa']['cursos'][0]['nome'];
+        }
+        else{
+          Login.Cursoaluno = "";
+        }
         login.login = true;
 
         return login;
